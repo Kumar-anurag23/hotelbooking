@@ -1,39 +1,42 @@
-//package org.hotelbooking.models;
-//
-//
-//import jakarta.persistence.*;
-//import lombok.*;
-//import org.springframework.boot.autoconfigure.web.WebProperties;
-//
-//import java.time.LocalDate;
-//
-//@Getter
-//@Setter
-//@AllArgsConstructor
-//@NoArgsConstructor
-//@Data
-//@Entity
-//@Table(name = "hotel_booking")
-//public class Booking {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-//    @Column(name = "name", nullable = false)
-//    private String name;
-//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    private Hotels hotel;
-//    @Column(name = "hotelId", nullable = false)
-//    @Enumerated(EnumType.STRING)
-//    private hotelType type;
-//    private int hotelId;
-//    @Column(name = "checkIn", nullable = false)
-//    private LocalDate checkIn;
-//    @Column(name = "checkOut", nullable = false)
-//    private LocalDate checkOut;
-//    @Column(name = "aadhar_id", nullable = false, unique = true, length = 12)
-//    private String aadharId;
-//    @Column( name ="status" ,nullable = false)
-//    private boolean status;
-//    @Column(name="guest",nullable = false)
-//    private  int guest;
-//}
+package org.hotelbooking.models;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+
+import java.time.LocalDate;
+
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Table(name = "Booking")
+public class Booking {
+
+
+    @ManyToOne
+    @JoinColumn(name = "hotel_id")
+    private Hotels hotel;
+    @NotBlank(message = "name can not be blank")
+    @Column(name = "name",nullable = false)
+    private String name;
+    @Column(nullable = false,name = "email")
+    private String email;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "room_type", nullable = false)
+    private RoomType roomType;
+    @Id
+    @Column(name = "roomNumber", nullable = false)
+    private Long roomNumber;
+    @Column(name = "capacity", nullable = false)
+    private Integer capacity;
+    @Column(name = "checkInDate",nullable = false)
+    private LocalDate checkInDate;
+    public enum RoomType {
+        SINGLE, DOUBLE, SUITE, DELUXE
+    }
+
+}
