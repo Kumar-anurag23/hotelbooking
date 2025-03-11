@@ -1,6 +1,6 @@
 package org.hotelbooking.controller;
 
-import lombok.RequiredArgsConstructor;
+import org.hotelbooking.Reponse.ResponseHandler;
 import org.hotelbooking.dto.HotelDto;
 import org.hotelbooking.models.Hotels;
 import org.hotelbooking.service.HotelService;
@@ -21,25 +21,40 @@ public class HotelController {
     }
     //http://localhost:8080/cre
     @PostMapping("/cre")
-    public ResponseEntity<HotelDto> createHotel(@RequestBody HotelDto hotelDto) {
+    public ResponseEntity<Object> createHotel(@RequestBody HotelDto hotelDto) {
         HotelDto hotelDto1 = hotelService.create(hotelDto);
-        return ResponseEntity.ok(hotelDto1);
+        if(hotelDto1 != null) {
+           ResponseEntity<Object> responseEntity= ResponseHandler.getResponse(HttpStatus.CREATED, "user register", true,hotelDto1);
+          return responseEntity;
+        }
+        ResponseEntity<Object> responseEntity= ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "some thing went wrong", true,hotelDto1);
+        return responseEntity;
     }
     //http://localhost:8080/getall
     @GetMapping("/getall")
-    public ResponseEntity<List<Hotels>> getAllHotels() {
-        return ResponseEntity.ok(hotelService.getAllHotels());
+    public ResponseEntity<Object> getAllHotels() {
+       List<Hotels> hotels=  hotelService.getAllHotels();
+       if(hotels != null) {
+          return ResponseHandler.getResponse(HttpStatus.OK, "success",true, hotels);
+       }
+        return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "some thing went wrong", false,hotels);
     }
     //http://localhost:8080/findbyid/1
     @GetMapping("/findbyid/{id}")
-    public  ResponseEntity<HotelDto> getHotelById(@PathVariable Long id) {
+    public  ResponseEntity<Object> getHotelById(@PathVariable Long id) {
       HotelDto hotelDto=hotelService.getHotelById(id);
-      return ResponseEntity.ok(hotelDto);
+     if(hotelDto != null) {
+         return ResponseHandler.getResponse(HttpStatus.OK, "success",true, hotelDto);
+     }
+     return  ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "id not found",false, hotelDto);
     }
     @PutMapping("/update/{id}")
-    public ResponseEntity<HotelDto> updateHotel(@PathVariable Long id, @RequestBody HotelDto hotelDto) {
+    public ResponseEntity<Object> updateHotel(@PathVariable Long id, @RequestBody HotelDto hotelDto) {
         HotelDto hotelDto1=hotelService.updateHotel(hotelDto,id);
-           return new ResponseEntity<>(hotelDto1, HttpStatus.OK);
+           if(hotelDto1 != null) {
+               return ResponseHandler.getResponse(HttpStatus.OK, "detail updated", true, hotelDto1);
+           }
+        return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "some thing went wrong", false,hotelDto1);
     }
     @DeleteMapping("/delete/{id}")
    public  String deleteHotelById(@PathVariable Long id) {

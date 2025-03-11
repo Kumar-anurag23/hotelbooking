@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingDto {
-    @Column(nullable = false,name = "email")
+
     private String email;
     @Enumerated(EnumType.STRING)
     @Column(name = "room_type", nullable = false)

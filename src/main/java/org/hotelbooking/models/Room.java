@@ -1,5 +1,4 @@
 package org.hotelbooking.models;
-
 import jakarta.persistence.*;
 import lombok.*;
 
