@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,4 +18,5 @@ public class HotelDto {
     private LocalDate availableFrom;
     private LocalDate availableTo;
     private boolean status;
+    private List<Long> bookedRoomNumbers;
 }

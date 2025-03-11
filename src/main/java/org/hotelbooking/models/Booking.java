@@ -1,48 +1,45 @@
-
 package org.hotelbooking.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Table(name = "Booking")
+@Table(name = "booking")
 public class Booking {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "hotel_id")
+    @JoinColumn(name = "hotel_id", nullable = false)
     private Hotels hotel;
 
-    @Column(name = "name",nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(nullable = false,name = "email")
+    @Column(nullable = false, name = "email")
     private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "room_type", nullable = false)
     private RoomType roomType;
 
-    @Id
-    @Column(name = "roomNumber", nullable = false)
+    @Column(name = "room_number", nullable = false)
     private Long roomNumber;
 
     @Column(name = "capacity", nullable = false)
     private Integer capacity;
 
-    @Column(name = "checkInDate",nullable = false)
+    @Column(name = "check_in_date", nullable = false)
     private LocalDate checkInDate;
 
     public enum RoomType {
         SINGLE, DOUBLE, SUITE, DELUXE
     }
-
 }

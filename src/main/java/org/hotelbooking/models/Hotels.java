@@ -1,14 +1,12 @@
 package org.hotelbooking.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
-@Table(name = "hotel")
+@Table(name = "hotels")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,11 +15,10 @@ public class Hotels {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // Primary Key
 
     @Column(name = "name", nullable = false, length = 125)
     private String name;
-
 
     @Column(name = "type", nullable = false)
     private String type;
@@ -37,4 +34,10 @@ public class Hotels {
 
     @Column(name = "status", nullable = false)
     private boolean status;
+
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    private List<Booking> bookings;
+
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    private List<Room> rooms;
 }

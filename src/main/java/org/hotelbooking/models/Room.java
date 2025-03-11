@@ -1,4 +1,5 @@
 package org.hotelbooking.models;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -6,25 +7,28 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @ToString
 @Table(name = "room")
 public class Room {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "hotel_name", nullable = false)
-    private String hotelName;
+
     @ManyToOne
-    @JoinColumn(name = "booking_room_number")
+    @JoinColumn(name = "hotel_id", nullable = false)
+    private Hotels hotel;
+
+    @Column(name = "room_type", nullable = false)
+    private String roomType;
+
+    @Column(name = "person", nullable = false)
+    private int person;
+
+    @Column(name = "availability", nullable = false)
+    private boolean availability;
+
+    @ManyToOne
+    @JoinColumn(name = "booking_id", nullable = true)
     private Booking booking;
-    @Column(name = "room_type",nullable = false)
-    private  String roomType;
-    @Column(name = "person",nullable = false)
-    private  int person;
-    @ManyToOne
-    @JoinColumn(name = "hotels_id")
-    private Hotels hotels;
-    @Column(name ="availability", nullable = false)
-    private  boolean status;
 }
