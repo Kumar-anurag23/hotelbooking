@@ -48,6 +48,7 @@ public class HotelController {
      }
      return  ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "id not found",false, hotelDto);
     }
+    //http://localhost:8080/update/1
     @PutMapping("/update/{id}")
     public ResponseEntity<Object> updateHotel(@PathVariable Long id, @RequestBody HotelDto hotelDto) {
         HotelDto hotelDto1=hotelService.updateHotel(hotelDto,id);
@@ -56,6 +57,7 @@ public class HotelController {
            }
         return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "some thing went wrong", false,hotelDto1);
     }
+    //http://localhost:8080/delete/1
     @DeleteMapping("/delete/{id}")
    public  String deleteHotelById(@PathVariable Long id) {
         hotelService.deleteHotel(id);

@@ -18,7 +18,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto createBooking(BookingDto bookingDto) {
         Booking booking=objectMapper.convertValue(bookingDto, Booking.class);
         Booking booking1=bookingRepository.save(booking);
-        BookingDto bookingDto1=objectMapper.convertValue(bookingDto, BookingDto.class);
+        BookingDto bookingDto1=objectMapper.convertValue(booking1, BookingDto.class);
         return bookingDto1;
     }
 
@@ -32,18 +32,11 @@ public class BookingServiceImpl implements BookingService {
         if(bookingDto.getName()!=booking1.getName()){
             booking1.setName(bookingDto.getName());
         }
-        if(bookingDto.getRoomNumber()!=booking1.getRoomNumber()){
-            booking1.setRoomNumber(bookingDto.getRoomNumber());
-        }
+
         if(bookingDto.getCheckInDate()!=booking1.getCheckInDate()){
             booking1.setCheckInDate(bookingDto.getCheckInDate());
         }
-        if(bookingDto.getCapacity()!=booking1.getCapacity()){
-            booking1.setCapacity(bookingDto.getCapacity());
-        }
-        if (bookingDto.getRoomType() != null) {
-            booking1.setRoomType(Booking.RoomType.valueOf(bookingDto.getRoomType()));
-        }
+
          bookingRepository.save(booking1);
         BookingDto bookingDto1=objectMapper.convertValue(bookingDto, BookingDto.class);
         return  bookingDto1;

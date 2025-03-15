@@ -32,6 +32,7 @@ public class BookingController {
         return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST,"something went wrong",false,null);
 
     }
+
     @GetMapping("/getall")
     public ResponseEntity<Object> getAllBooking(){
         List<Object> list= Collections.singletonList(bookingService.getAllBookings());
@@ -48,6 +49,7 @@ public class BookingController {
         }
         return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST,"something went wrong",false,null);
     }
+
     @DeleteMapping("/deletebyid")
     public ResponseEntity<Object> deleteBookingById(@PathVariable Long id){
           bookingService.deleteBooking(id);

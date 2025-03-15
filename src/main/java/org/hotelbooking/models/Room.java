@@ -4,11 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Data
-@AllArgsConstructor
+@Table(name = "rooms")
+@Getter
+@Setter
 @NoArgsConstructor
-@ToString
-@Table(name = "room")
+@AllArgsConstructor
 public class Room {
 
     @Id
@@ -19,16 +19,17 @@ public class Room {
     @JoinColumn(name = "hotel_id", nullable = false)
     private Hotels hotel;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "room_type", nullable = false)
-    private String roomType;
+    private RoomType roomType;
 
-    @Column(name = "person", nullable = false)
-    private int person;
+    @Column(name = "capacity", nullable = false)
+    private int capacity;
 
-    @Column(name = "availability", nullable = false)
-    private boolean availability;
+    @Column(name = "available", nullable = false)
+    private boolean available;
 
-    @ManyToOne
-    @JoinColumn(name = "booking_id", nullable = true)
-    private Booking booking;
+    public enum RoomType {
+        SINGLE, DOUBLE, SUITE, DELUXE
+    }
 }

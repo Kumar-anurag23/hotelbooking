@@ -1,5 +1,7 @@
 package org.hotelbooking.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -15,7 +17,7 @@ public class Hotels {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Primary Key
+    private Long id;
 
     @Column(name = "name", nullable = false, length = 125)
     private String name;
@@ -35,9 +37,7 @@ public class Hotels {
     @Column(name = "status", nullable = false)
     private boolean status;
 
-    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
-    private List<Booking> bookings;
-
-    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Room> rooms;
+
 }

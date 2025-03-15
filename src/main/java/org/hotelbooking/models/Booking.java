@@ -16,9 +16,6 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "hotel_id", nullable = false)
-    private Hotels hotel;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -26,20 +23,13 @@ public class Booking {
     @Column(nullable = false, name = "email")
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "room_type", nullable = false)
-    private RoomType roomType;
-
-    @Column(name = "room_number", nullable = false)
-    private Long roomNumber;
-
-    @Column(name = "capacity", nullable = false)
-    private Integer capacity;
+    @ManyToOne
+    @JoinColumn(name = "room_id", nullable = false)
+    private Room room;
 
     @Column(name = "check_in_date", nullable = false)
     private LocalDate checkInDate;
 
-    public enum RoomType {
-        SINGLE, DOUBLE, SUITE, DELUXE
-    }
+   @Column(name = "guest")
+    private  Integer guest;
 }
