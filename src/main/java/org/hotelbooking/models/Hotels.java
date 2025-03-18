@@ -38,6 +38,7 @@ public class Hotels {
     private boolean status;
 
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Room> rooms;
 
 }

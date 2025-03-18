@@ -24,7 +24,7 @@ public class Room {
     private RoomType roomType;
 
     @Column(name = "capacity", nullable = false)
-    private int capacity;
+    private int person;
 
     @Column(name = "available", nullable = false)
     private boolean available;
