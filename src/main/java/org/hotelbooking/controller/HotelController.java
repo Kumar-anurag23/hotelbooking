@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-//@RequestMapping("/api/hotel")
+@RequestMapping("/hotel")
 public class HotelController {
 
     private final HotelService hotelService;
@@ -20,7 +20,7 @@ public class HotelController {
         this.hotelService = hotelService;
     }
     //http://localhost:8080/cre
-    @PostMapping("/cre")
+    @PostMapping("/create")
     public ResponseEntity<Object> createHotel(@RequestBody HotelDto hotelDto) {
         HotelDto hotelDto1 = hotelService.create(hotelDto);
         if(hotelDto1 != null) {

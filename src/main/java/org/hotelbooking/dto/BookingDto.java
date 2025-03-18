@@ -1,8 +1,8 @@
 package org.hotelbooking.dto;
 
-import lombok.*;
-import org.hotelbooking.models.Room;
-
+import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Data
@@ -10,11 +10,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class BookingDto {
     private Long id;
-    private Long hotelId;
     private String name;
     private String email;
-    private Room.RoomType roomType;
-    private Long roomNumber;
-    private Integer capacity;
+    private Long roomId;
     private LocalDate checkInDate;
+    private Integer guest;
 }
