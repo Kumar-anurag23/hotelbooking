@@ -10,6 +10,7 @@ import org.hotelbooking.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -24,12 +25,15 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto createBooking(BookingDto bookingDto) {
         Room room = roomRepository.findById(bookingDto.getRoomId())
                 .orElseThrow(() -> new RuntimeException("Room not found with id: " + bookingDto.getRoomId()));
-        Room room1=new Room();
-        room1.setAvailable(false);
-        roomRepository.save(room1);
+       boolean check=bookingRepository.existsByRoomAndCheckInDate(room, bookingDto.getCheckInDate());
+       if(check){
+           throw new RuntimeException("Room already exists with id: " + bookingDto.getRoomId());
+       }
         Booking booking = objectMapper.convertValue(bookingDto, Booking.class);
         booking.setRoom(room);
         Booking savedBooking = bookingRepository.save(booking);
+        room.setAvailable(false);
+        roomRepository.save(room);
         return objectMapper.convertValue(savedBooking, BookingDto.class);
     }
 
@@ -58,10 +62,20 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public String deleteBooking(Long bookingId) {
-        if (bookingRepository.existsById(bookingId)) {
-            bookingRepository.deleteById(bookingId);
-            return "Booking deleted successfully";
+        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
+
+        if(bookingOptional.isPresent()){
+        Booking booking = bookingOptional.get();
+        bookingRepository.deleteById(bookingId);
+
         }
+//        long remainingBookings = bookingRepository.countByRoomId(room.getId());
+
+//        if (remainingBookings == 0) {
+//            // Mark the room as available
+//            room.setAvailable(true);
+//            roomRepository.save(room);
+//        }
         return "Booking not found";
     }
 }

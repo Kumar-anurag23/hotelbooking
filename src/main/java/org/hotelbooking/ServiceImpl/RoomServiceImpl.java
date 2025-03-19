@@ -32,8 +32,9 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<Room> getAllRooms() {
-        return roomRepository.findAll();
+    public List<Room> getByHotelId(Long hotelId) {
+        List<Room>l1=roomRepository.findByHotelId(hotelId);
+        return l1;
     }
 
     @Override
@@ -60,8 +61,12 @@ public class RoomServiceImpl implements RoomService {
         return objectMapper.convertValue(updatedRoom, RoomDto.class);
     }
 
-    @Override
-    public void deleteRoom(Long id) {
-        roomRepository.deleteById(id);
+ @Override
+    public boolean deleteRoom(Long id) {
+        if (roomRepository.existsById(id)) { // Check if the room exists
+            roomRepository.deleteById(id); // Delete the room
+            return true; // Return true if deletion is successful
+        }
+        return false; // Return false if the room does not exist
     }
 }

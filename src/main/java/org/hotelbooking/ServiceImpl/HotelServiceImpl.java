@@ -8,7 +8,7 @@ import org.hotelbooking.service.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
+
 
 
 @Service
@@ -44,12 +44,13 @@ public class HotelServiceImpl implements HotelService {
  public HotelDto updateHotel(HotelDto hotelDto, Long id) {
   Hotels existingHotel = hotelRepository.findById(id)
           .orElseThrow(() -> new RuntimeException("Hotel not found with id: " + id));
-
   existingHotel.setName(hotelDto.getName());
-  existingHotel.setType(hotelDto.getType());
+  existingHotel.setCity(hotelDto.getCity());
+  existingHotel.setAddress(hotelDto.getAddress());
+  existingHotel.setCountry(hotelDto.getCountry());
+  existingHotel.setEmail(hotelDto.getEmail());
+  existingHotel.setPhoneNumber(hotelDto.getPhoneNumber());
   existingHotel.setDescription(hotelDto.getDescription());
-  existingHotel.setAvailableFrom(hotelDto.getAvailableFrom());
-  existingHotel.setAvailableTo(hotelDto.getAvailableTo());
   existingHotel.setStatus(hotelDto.isStatus());
 
   Hotels savedHotel = hotelRepository.save(existingHotel);

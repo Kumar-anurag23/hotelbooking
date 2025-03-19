@@ -1,7 +1,10 @@
 package org.hotelbooking.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "rooms")
@@ -17,6 +20,7 @@ public class Room {
 
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
+    @JsonIgnore
     private Hotels hotel;
 
     @Enumerated(EnumType.STRING)
@@ -28,6 +32,10 @@ public class Room {
 
     @Column(name = "available", nullable = false)
     private boolean available;
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Booking> bookings;
 
     public enum RoomType {
         SINGLE, DOUBLE, SUITE, DELUXE

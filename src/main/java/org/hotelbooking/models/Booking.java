@@ -12,9 +12,8 @@ import java.time.LocalDate;
 @Table(name = "booking")
 public class Booking {
 
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Add this line
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name", nullable = false)
@@ -23,13 +22,13 @@ public class Booking {
     @Column(nullable = false, name = "email")
     private String email;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
     @Column(name = "check_in_date", nullable = false)
     private LocalDate checkInDate;
 
-   @Column(name = "guest")
-    private  Integer guest;
+    @Column(name = "guest")
+    private Integer guest;
 }

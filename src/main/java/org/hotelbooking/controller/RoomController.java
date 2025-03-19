@@ -37,8 +37,12 @@ public class RoomController {
 
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Object> deleteRoom(@PathVariable Long id) {
-        roomService.deleteRoom(id);
-        return ResponseHandler.getResponse(HttpStatus.OK, "room delete", true, id);
+        boolean isDeleted = roomService.deleteRoom(id);
+        if (isDeleted) {
+            return ResponseHandler.getResponse(HttpStatus.OK, "Room deleted successfully", true, id);
+        } else {
+            return ResponseHandler.getResponse(HttpStatus.NOT_FOUND, "Room not found with id: " + id, false, null);
+        }
     }
 
     @GetMapping("getid/{id}")
@@ -50,12 +54,13 @@ public class RoomController {
         return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "room get", false, null);
     }
 
-    @GetMapping("/getall")
-    public ResponseEntity<Object> getallRooms() {
-        List<Room> rooms = roomService.getAllRooms();
-        if (rooms != null) {
-            return ResponseHandler.getResponse(HttpStatus.OK, "room get", true, rooms);
+    @GetMapping("/getbyhotelid/{hotelId}")
+    public ResponseEntity<Object> getallRooms(@PathVariable Long hotelId) {
+        List<Room> rooms = roomService.getByHotelId(hotelId);
+        if (!rooms.isEmpty()) {
+            return ResponseHandler.getResponse(HttpStatus.OK, "Rooms fetched successfully", true, rooms);
         }
-        return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "room get", false, null);
+        return ResponseHandler.getResponse(HttpStatus.NOT_FOUND, "No rooms found for the given hotel ID", false, null);
     }
-}
+
+    }

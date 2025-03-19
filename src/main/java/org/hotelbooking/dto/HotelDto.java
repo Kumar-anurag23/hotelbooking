@@ -1,19 +1,31 @@
 package org.hotelbooking.dto;
 
 import lombok.*;
-import java.time.LocalDate;
-import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class HotelDto{
+@AllArgsConstructor
+public class HotelDto {
+
     private Long id;
+
     private String name;
-    private String type;
+
+    private String address;
+
+    private String city;
+
+    private String country;
+
+    private String phoneNumber;
+
+    private String email;
+
     private String description;
-    private LocalDate availableFrom;
-    private LocalDate availableTo;
+
     private boolean status;
-    private List<RoomDto> rooms;
+
+    private Double longitude;
+
+    private Double latitude;
 }
