@@ -64,18 +64,18 @@ public class BookingServiceImpl implements BookingService {
     public String deleteBooking(Long bookingId) {
         Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
 
-        if(bookingOptional.isPresent()){
-        Booking booking = bookingOptional.get();
-        bookingRepository.deleteById(bookingId);
+        if(bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+            bookingRepository.deleteById(bookingId);
+            Room room = booking.getRoom();
 
+            long remainingBookings = bookingRepository.countByRoomId(room.getId());
+
+            if (remainingBookings == 0) {
+                room.setAvailable(true);
+                roomRepository.save(room);
+            }
         }
-//        long remainingBookings = bookingRepository.countByRoomId(room.getId());
-
-//        if (remainingBookings == 0) {
-//            // Mark the room as available
-//            room.setAvailable(true);
-//            roomRepository.save(room);
-//        }
         return "Booking not found";
     }
 }

@@ -61,6 +61,10 @@ public class HotelServiceImpl implements HotelService {
 
  @Override
  public void deleteHotel(Long id) {
-  hotelRepository.deleteById(id);
+  boolean find= hotelRepository.existsById(id);
+  if(find){
+   hotelRepository.deleteById(id);
+  }
+  hotelRepository.resetAutoIncrement();
  }
 }

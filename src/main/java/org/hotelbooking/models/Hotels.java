@@ -43,7 +43,7 @@ public class Hotels {
     private boolean status;
 
     @Column(name = "longitude")
-    private Double longitude; 
+    private Double longitude;
 
     @Column(name = "latitude")
     private Double latitude;
