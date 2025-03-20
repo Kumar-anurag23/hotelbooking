@@ -1,31 +1,22 @@
 package org.hotelbooking.dto;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
+import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class HotelDto {
-
     private Long id;
-
     private String name;
-
     private String address;
-
     private String city;
-
     private String country;
-
     private String phoneNumber;
-
     private String email;
-
     private String description;
-
     private boolean status;
-
-    private Double longitude;
-
-    private Double latitude;
+    private double longitude;
+    private double latitude;
+    private List<RoomDto> rooms;
 }

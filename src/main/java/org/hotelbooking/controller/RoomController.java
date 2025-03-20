@@ -1,6 +1,7 @@
 package org.hotelbooking.controller;
 
 import org.hotelbooking.Reponse.ResponseHandler;
+import org.hotelbooking.dto.HotelDto;
 import org.hotelbooking.dto.RoomDto;
 import org.hotelbooking.models.Room;
 import org.hotelbooking.service.RoomService;
@@ -54,13 +55,14 @@ public class RoomController {
         return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "room get", false, null);
     }
 
-    @GetMapping("/getbyhotelid/{hotelId}")
-    public ResponseEntity<Object> getallRooms(@PathVariable Long hotelId) {
-        List<Room> rooms = roomService.getByHotelId(hotelId);
-        if (!rooms.isEmpty()) {
-            return ResponseHandler.getResponse(HttpStatus.OK, "Rooms fetched successfully", true, rooms);
+    @GetMapping("/roombyhid/{hotelId}")
+    public ResponseEntity<Object> getHotelWithRooms(@PathVariable Long hotelId) {
+        try {
+            HotelDto hotelDto = roomService.getByHotelId(hotelId);
+            return ResponseHandler.getResponse(HttpStatus.OK, "Hotel details fetched successfully", false, hotelDto);
+        } catch (Exception e) {
+            return ResponseHandler.getResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch hotel details", true, null);
         }
-        return ResponseHandler.getResponse(HttpStatus.NOT_FOUND, "No rooms found for the given hotel ID", false, null);
     }
 
     }

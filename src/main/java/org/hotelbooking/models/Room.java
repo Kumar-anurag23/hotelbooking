@@ -17,7 +17,6 @@ public class Room {
 
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
-   
     private Hotels hotel;
 
     @Column(name = "room_number", nullable = false, unique = true)

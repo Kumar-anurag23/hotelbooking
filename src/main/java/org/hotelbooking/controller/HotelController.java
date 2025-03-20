@@ -64,4 +64,5 @@ public class HotelController {
         return "Hotel deleted";
    }
 
+
 }

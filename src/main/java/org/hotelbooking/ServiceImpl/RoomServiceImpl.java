@@ -1,6 +1,7 @@
 package org.hotelbooking.ServiceImpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hotelbooking.dto.HotelDto;
 import org.hotelbooking.dto.RoomDto;
 import org.hotelbooking.models.Hotels;
 import org.hotelbooking.models.Room;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomServiceImpl implements RoomService {
@@ -26,7 +28,7 @@ public class RoomServiceImpl implements RoomService {
         Hotels hotel = hotelRepository.findById(roomDto.getHotel_Id())
                 .orElseThrow(() -> new RuntimeException("Hotel not found with id: " + roomDto.getHotel_Id()));
         Room room = new Room();
-         room.setId(roomDto.getId());
+        room.setId(roomDto.getId());
         room.setHotel(hotel);
         room.setRoomNumber(roomDto.getRoomNumber());
         room.setRoomType(Room.RoomType.valueOf(roomDto.getRoomType()));
@@ -38,9 +40,20 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<Room> getByHotelId(Long hotelId) {
-        List<Room>l1=roomRepository.findByHotelId(hotelId);
-        return l1;
+    public HotelDto getByHotelId(Long hotelId) {
+        Hotels hotel = hotelRepository.findByIdWithRooms(Math.toIntExact(hotelId))
+                .orElseThrow(() -> new RuntimeException("Hotel not found"));
+        HotelDto hotelDto = objectMapper.convertValue(hotel, HotelDto.class);
+        List<RoomDto> roomDtos = hotel.getRooms().stream()
+                .map(room -> {
+                    RoomDto roomDto = objectMapper.convertValue(room, RoomDto.class);
+                    roomDto.setHotel_Id(room.getHotel().getId());
+                    return roomDto;
+                })
+                .collect(Collectors.toList());
+        hotelDto.setRooms(roomDtos);
+
+        return hotelDto;
     }
 
     @Override
@@ -53,11 +66,10 @@ public class RoomServiceImpl implements RoomService {
     public RoomDto updateRoom(RoomDto roomDto, Long id) {
         Room existingRoom = roomRepository.findById(id).orElseThrow(() -> new RuntimeException("Room not found with id: " + id));
         existingRoom.setAvailable(roomDto.isAvailable());
-         existingRoom.setRoomNumber(roomDto.getRoomNumber());
-         existingRoom.setPricePerNight(roomDto.getPricePerNight());
-         existingRoom.setCapacity(roomDto.getCapacity());
+        existingRoom.setRoomNumber(roomDto.getRoomNumber());
+        existingRoom.setPricePerNight(roomDto.getPricePerNight());
+        existingRoom.setCapacity(roomDto.getCapacity());
         existingRoom.setRoomType(Room.RoomType.valueOf(roomDto.getRoomType()));
-
 
         if (!existingRoom.getHotel().getId().equals(roomDto.getHotel_Id())) {
             Hotels hotel = hotelRepository.findById(roomDto.getHotel_Id())
@@ -69,7 +81,7 @@ public class RoomServiceImpl implements RoomService {
         return objectMapper.convertValue(updatedRoom, RoomDto.class);
     }
 
- @Override
+    @Override
     public boolean deleteRoom(Long id) {
         if (roomRepository.existsById(id)) {
             roomRepository.deleteById(id);
