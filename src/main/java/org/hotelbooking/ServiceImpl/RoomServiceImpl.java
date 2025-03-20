@@ -25,8 +25,14 @@ public class RoomServiceImpl implements RoomService {
     public RoomDto createRoom(RoomDto roomDto) {
         Hotels hotel = hotelRepository.findById(roomDto.getHotel_Id())
                 .orElseThrow(() -> new RuntimeException("Hotel not found with id: " + roomDto.getHotel_Id()));
-        Room room = objectMapper.convertValue(roomDto, Room.class);
+        Room room = new Room();
+         room.setId(roomDto.getId());
         room.setHotel(hotel);
+        room.setRoomNumber(roomDto.getRoomNumber());
+        room.setRoomType(Room.RoomType.valueOf(roomDto.getRoomType()));
+        room.setCapacity(roomDto.getCapacity());
+        room.setPricePerNight(roomDto.getPricePerNight());
+        room.setAvailable(roomDto.isAvailable());
         Room savedRoom = roomRepository.save(room);
         return objectMapper.convertValue(savedRoom, RoomDto.class);
     }
@@ -47,8 +53,10 @@ public class RoomServiceImpl implements RoomService {
     public RoomDto updateRoom(RoomDto roomDto, Long id) {
         Room existingRoom = roomRepository.findById(id).orElseThrow(() -> new RuntimeException("Room not found with id: " + id));
         existingRoom.setAvailable(roomDto.isAvailable());
-        existingRoom.setPerson(roomDto.getPerson());
-        existingRoom.setRoomType(roomDto.getRoomType());
+         existingRoom.setRoomNumber(roomDto.getRoomNumber());
+         existingRoom.setPricePerNight(roomDto.getPricePerNight());
+         existingRoom.setCapacity(roomDto.getCapacity());
+        existingRoom.setRoomType(Room.RoomType.valueOf(roomDto.getRoomType()));
 
 
         if (!existingRoom.getHotel().getId().equals(roomDto.getHotel_Id())) {
@@ -63,10 +71,10 @@ public class RoomServiceImpl implements RoomService {
 
  @Override
     public boolean deleteRoom(Long id) {
-        if (roomRepository.existsById(id)) { // Check if the room exists
-            roomRepository.deleteById(id); // Delete the room
-            return true; // Return true if deletion is successful
+        if (roomRepository.existsById(id)) {
+            roomRepository.deleteById(id);
+            return true;
         }
-        return false; // Return false if the room does not exist
+        return false;
     }
 }

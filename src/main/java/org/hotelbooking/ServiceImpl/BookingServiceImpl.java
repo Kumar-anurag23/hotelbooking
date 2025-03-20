@@ -44,6 +44,10 @@ public class BookingServiceImpl implements BookingService {
         Booking updatedBooking = objectMapper.convertValue(bookingDto, Booking.class);
         updatedBooking.setId(existingBooking.getId());
         updatedBooking.setRoom(existingBooking.getRoom());
+        updatedBooking.setStatus(existingBooking.getStatus());
+        updatedBooking.setCheckInDate(existingBooking.getCheckInDate());
+        updatedBooking.setCheckOutDate(existingBooking.getCheckOutDate());
+        updatedBooking.setTotalPrice(existingBooking.getTotalPrice());
         Booking savedBooking = bookingRepository.save(updatedBooking);
         return objectMapper.convertValue(savedBooking, BookingDto.class);
     }
@@ -69,12 +73,12 @@ public class BookingServiceImpl implements BookingService {
             bookingRepository.deleteById(bookingId);
             Room room = booking.getRoom();
 
-            long remainingBookings = bookingRepository.countByRoomId(room.getId());
-
-            if (remainingBookings == 0) {
-                room.setAvailable(true);
-                roomRepository.save(room);
-            }
+           // long remainingBookings = bookingRepository.countByRoomId(room.getId());
+//
+//            if (remainingBookings == 0) {
+//                room.setAvailable(true);
+//                roomRepository.save(room);
+//            }
         }
         return "Booking not found";
     }
