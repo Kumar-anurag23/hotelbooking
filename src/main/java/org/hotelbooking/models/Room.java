@@ -13,13 +13,14 @@ import java.util.List;
 @AllArgsConstructor
 public class Room {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Manually assigned ID (no auto-generation)
 
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
     private Hotels hotel;
 
-    @Column(name = "room_number", nullable = false, unique = true)
+    @Column(name = "room_number", nullable = false)
     private String roomNumber;
 
     @Enumerated(EnumType.STRING)

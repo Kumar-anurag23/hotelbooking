@@ -8,7 +8,9 @@ import org.hotelbooking.service.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 
 
 @Service
@@ -16,31 +18,35 @@ public class HotelServiceImpl implements HotelService {
 
  @Autowired
  private HotelRepository hotelRepository;
+
  @Autowired
  private ObjectMapper objectMapper;
 
  @Override
+ @CacheEvict(value = "hotels", allEntries = true)
  public HotelDto create(HotelDto hotelDto) {
   Hotels hotelEntity = objectMapper.convertValue(hotelDto, Hotels.class);
   Hotels savedHotel = hotelRepository.save(hotelEntity);
-  HotelDto hoteldto= objectMapper.convertValue(savedHotel, HotelDto.class);
-  return hoteldto;
+  return objectMapper.convertValue(savedHotel, HotelDto.class);
  }
 
  @Override
+ @Cacheable(value = "hotels", key = "'all'")
  public List<Hotels> getAllHotels() {
   return hotelRepository.findAll();
  }
 
  @Override
+ @Cacheable(value = "hotels", key = "#id")
  public HotelDto getHotelById(Long id) {
   Hotels hotels = hotelRepository.findById(id)
           .orElseThrow(() -> new RuntimeException("Hotel not found with id: " + id));
   return objectMapper.convertValue(hotels, HotelDto.class);
  }
 
-
  @Override
+ @CachePut(value = "hotels", key = "#id")
+ @CacheEvict(value = "hotels", key = "'all'")
  public HotelDto updateHotel(HotelDto hotelDto, Long id) {
   Hotels existingHotel = hotelRepository.findById(id)
           .orElseThrow(() -> new RuntimeException("Hotel not found with id: " + id));
@@ -57,12 +63,10 @@ public class HotelServiceImpl implements HotelService {
   return objectMapper.convertValue(savedHotel, HotelDto.class);
  }
 
-
-
  @Override
+ @CacheEvict(value = "hotels", key = "#id")
  public void deleteHotel(Long id) {
-  boolean find= hotelRepository.existsById(id);
-  if(find){
+  if (hotelRepository.existsById(id)) {
    hotelRepository.deleteById(id);
   }
   hotelRepository.resetAutoIncrement();

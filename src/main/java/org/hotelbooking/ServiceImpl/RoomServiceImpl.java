@@ -27,14 +27,15 @@ public class RoomServiceImpl implements RoomService {
     public RoomDto createRoom(RoomDto roomDto) {
         Hotels hotel = hotelRepository.findById(roomDto.getHotel_Id())
                 .orElseThrow(() -> new RuntimeException("Hotel not found with id: " + roomDto.getHotel_Id()));
+
         Room room = new Room();
-        room.setId(roomDto.getId());
         room.setHotel(hotel);
         room.setRoomNumber(roomDto.getRoomNumber());
         room.setRoomType(Room.RoomType.valueOf(roomDto.getRoomType()));
         room.setCapacity(roomDto.getCapacity());
         room.setPricePerNight(roomDto.getPricePerNight());
         room.setAvailable(roomDto.isAvailable());
+
         Room savedRoom = roomRepository.save(room);
         return objectMapper.convertValue(savedRoom, RoomDto.class);
     }
