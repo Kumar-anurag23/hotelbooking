@@ -4,6 +4,7 @@ import org.hotelbooking.Reponse.ResponseHandler;
 import org.hotelbooking.dto.HotelDto;
 import org.hotelbooking.models.Hotels;
 import org.hotelbooking.service.HotelService;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,6 @@ public class HotelController {
     public HotelController(HotelService hotelService) {
         this.hotelService = hotelService;
     }
-    //http://localhost:8080/cre
     @PostMapping("/create")
     public ResponseEntity<Object> createHotel(@RequestBody HotelDto hotelDto) {
         HotelDto hotelDto1 = hotelService.create(hotelDto);
@@ -32,8 +32,11 @@ public class HotelController {
     }
     //http://localhost:8080/getall
     @GetMapping("/getall")
-    public ResponseEntity<Object> getAllHotels() {
-       List<Hotels> hotels=  hotelService.getAllHotels();
+    public ResponseEntity<Object> getAllHotels(@RequestParam(defaultValue = "0") int page,
+                                               @RequestParam (defaultValue = "5") int size,
+                                               @RequestParam(defaultValue = "id") String str,
+                                               @RequestParam(defaultValue = "asc") String sortDir, Sort sort) {
+       List<Hotels> hotels=  hotelService.getAllHotels(size,page,str,sortDir);
        if(hotels != null) {
           return ResponseHandler.getResponse(HttpStatus.OK, "success",true, hotels);
        }

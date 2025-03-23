@@ -9,7 +9,7 @@ public interface BookingService {
     BookingDto createBooking(BookingDto bookingDto);
     BookingDto updateBooking(BookingDto bookingDto,Long id);
     BookingDto getBooking(Long bookingId);
-    List<Booking> getAllBookings();
+    List<Booking> getAllBookings(int size,int page ,String sortBy,String sortDir);
     String deleteBooking(Long bookingId);
 
 }

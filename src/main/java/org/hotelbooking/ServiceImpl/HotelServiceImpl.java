@@ -6,6 +6,9 @@ import org.hotelbooking.models.Hotels;
 import org.hotelbooking.repository.HotelRepository;
 import org.hotelbooking.service.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import org.springframework.cache.annotation.Cacheable;
@@ -31,11 +34,13 @@ public class HotelServiceImpl implements HotelService {
  }
 
  @Override
- @Cacheable(value = "hotels", key = "'all'")
- public List<Hotels> getAllHotels() {
-  return hotelRepository.findAll();
+ @Cacheable(value = "hotels", key = "{#page, #size, #sortBy, #sortDir}"
+ )
+ public List<Hotels> getAllHotels(int size, int page, String sortBy, String sortDir) {
+  Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy);
+  Pageable pageable = PageRequest.of(page, size, sort);
+  return hotelRepository.findAll(pageable).getContent();
  }
-
  @Override
  @Cacheable(value = "hotels", key = "#id")
  public HotelDto getHotelById(Long id) {

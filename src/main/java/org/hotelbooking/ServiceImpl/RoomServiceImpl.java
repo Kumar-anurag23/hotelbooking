@@ -45,7 +45,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    @Cacheable(value = "rooms", key = "#id")
+    @Cacheable(value = "rooms", key = "#id != null ? #id : 'default'")
     public HotelDto getByHotelId(Long hotelId) {
         Hotels hotel = hotelRepository.findByIdWithRooms(Math.toIntExact(hotelId))
                 .orElseThrow(() -> new RuntimeException("Hotel not found"));
@@ -63,7 +63,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    @Cacheable(value = "rooms",key = "#id")
+    @Cacheable(value = "rooms", key = "#id != null ? #id : 'default'")
     public RoomDto getRoomById(Long id) {
         Room room = roomRepository.findById(id).orElseThrow(() -> new RuntimeException("Room not found with id: " + id));
         return objectMapper.convertValue(room, RoomDto.class);

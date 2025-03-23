@@ -4,6 +4,7 @@ import org.hotelbooking.dto.BookingDto;
 import org.hotelbooking.models.Booking;
 import org.hotelbooking.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,8 @@ public class BookingController {
     private BookingService bookingService;
 
     @PostMapping("/create")
-    public ResponseEntity<Object> creatBooking(@RequestBody BookingDto bookingDto) {
+    public ResponseEntity<Object> creatBooking(@RequestBody BookingDto bookingDto)
+            {
         BookingDto result = bookingService.createBooking(bookingDto);
         if (result != null) {
             return ResponseHandler.getResponse(HttpStatus.OK, "create booking", true, result);
@@ -34,8 +36,11 @@ public class BookingController {
     }
 
     @GetMapping("/getall")
-    public ResponseEntity<Object> getAllBooking() {
-        List<Booking> list = bookingService.getAllBookings();
+    public ResponseEntity<Object> getAllBooking(@RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam (defaultValue = "5") int size,
+                                                 @RequestParam(defaultValue = "id") String str,
+                                                 @RequestParam(defaultValue = "asc") String sortDir) {
+        List<Booking> list = bookingService.getAllBookings(size,page,str,sortDir);
         if (list != null) {
             return ResponseHandler.getResponse(HttpStatus.OK, "get all booking", true, list);
         }

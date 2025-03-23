@@ -26,16 +26,14 @@ public class BookingDto {
 
     private String email;
 
-    @JsonProperty("roomNumber")
     private String roomNumber;
 
-    @JsonProperty("checkInDate")
-    private LocalDate checkInDate;
+    private String checkInDate;
 
-    @JsonProperty("checkOutDate")
-    private LocalDate checkOutDate;
 
-    @JsonProperty("total_Price")
+    private String checkOutDate;
+
+
     private Double totalPrice;
 
     private String status;

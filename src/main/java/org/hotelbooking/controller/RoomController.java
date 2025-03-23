@@ -55,7 +55,8 @@ public class RoomController {
         return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "room get", false, null);
     }
 
-    @GetMapping("/roombyhid/{hotelId}")
+    @GetMapping("/roomgit" +
+            "byhid/{hotelId}")
     public ResponseEntity<Object> getHotelWithRooms(@PathVariable Long hotelId) {
         try {
             HotelDto hotelDto = roomService.getByHotelId(hotelId);

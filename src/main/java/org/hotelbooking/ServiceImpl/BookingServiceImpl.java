@@ -13,7 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,11 +42,10 @@ public class BookingServiceImpl implements BookingService {
         Hotels hotel = hotelRepository.findById(bookingDto.getHotelId())
                 .orElseThrow(() -> new RuntimeException("Hotel not found with id: " + bookingDto.getHotelId()));
 
-        boolean isRoomBooked = bookingRepository.existsByRoomAndCheckInDate(room, bookingDto.getCheckInDate());
+        boolean isRoomBooked = bookingRepository.existsByRoomAndCheckInDate(room, LocalDate.parse(bookingDto.getCheckInDate()));
         if (isRoomBooked) {
             throw new RuntimeException("Room is already booked for the given check-in date: " + bookingDto.getCheckInDate());
         }
-
         Booking booking = objectMapper.convertValue(bookingDto, Booking.class);
         booking.setHotel(hotel);
         booking.setRoom(room);
@@ -51,11 +55,8 @@ public class BookingServiceImpl implements BookingService {
         room.setAvailable(false);
         roomRepository.save(room);
         BookingDto savedBookingDto = objectMapper.convertValue(savedBooking, BookingDto.class);
-
-        // Manually set room_Id and hotel_Id in the DTO
         savedBookingDto.setRoomId(savedBooking.getRoom().getId());
         savedBookingDto.setHotelId(savedBooking.getHotel().getId());
-
         return savedBookingDto;
     }
     @Override
@@ -81,13 +82,12 @@ public class BookingServiceImpl implements BookingService {
         existingBooking.setRoom(room);
         existingBooking.setRoomNumber(room.getRoomNumber());
         existingBooking.setHotel(hotel);
-
         Booking savedBooking = bookingRepository.save(existingBooking);
         return objectMapper.convertValue(savedBooking, BookingDto.class);
     }
 
     @Override
-    @Cacheable(value = "booking",key = "#id")
+    @Cacheable(value = "booking", key = "#id != null ? #id : 'default'")
     public BookingDto getBooking(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found with id: " + bookingId));
@@ -95,9 +95,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Cacheable(value = "booking",key = "all")
-    public List<Booking> getAllBookings() {
-        return bookingRepository.findAll();
+    @Cacheable(value = "booking",key = "{#page, #size, #sortBy, #sortDir}")
+    public List<Booking> getAllBookings(int size,int page ,String sortBy,String sortDir) {
+        Sort sort=Sort.by(Sort.Direction.fromString(sortBy),sortDir);
+        Pageable pageable= PageRequest.of(page,size,sort);
+        return bookingRepository.findAll(pageable).getContent();
     }
 
     @Override
