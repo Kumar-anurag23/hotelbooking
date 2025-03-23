@@ -30,7 +30,18 @@ public class HotelController {
         ResponseEntity<Object> responseEntity= ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "some thing went wrong", true,hotelDto1);
         return responseEntity;
     }
+    @GetMapping("find/{city}")
+    public ResponseEntity<Object> getHotel(@PathVariable String city, @RequestParam int size, @RequestParam int page) {
+        List<Hotels> hotels=hotelService.getAllHotelsByCity(city,size,page);
+        if (hotels !=null) {
+
+            return ResponseHandler.getResponse(HttpStatus.OK,"Hotels  found",true,hotels);
+        }
+
+        return ResponseHandler.getResponse(HttpStatus.NOT_FOUND,"Hotel not found",false,null);
+    }
     //http://localhost:8080/getall
+    
     @GetMapping("/getall")
     public ResponseEntity<Object> getAllHotels(@RequestParam(defaultValue = "0") int page,
                                                @RequestParam (defaultValue = "5") int size,

@@ -76,4 +76,12 @@ public class HotelServiceImpl implements HotelService {
   }
   hotelRepository.resetAutoIncrement();
  }
+
+ @Override
+ @Cacheable(value = "hotels",key = "city")
+ public List<Hotels> getAllHotelsByCity(String city, int size , int page ) {
+  Pageable pageable = PageRequest.of(page, size);
+  List<Hotels> hotels=hotelRepository.findByCity(city,pageable);
+  return hotels;
+ }
 }

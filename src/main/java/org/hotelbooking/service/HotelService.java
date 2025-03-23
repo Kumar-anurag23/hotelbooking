@@ -10,5 +10,5 @@ public interface HotelService {
     HotelDto getHotelById(Long id);
     HotelDto updateHotel(HotelDto hotels,Long id);
     void deleteHotel(Long id);
-
+     List<Hotels> getAllHotelsByCity(String city, int size, int page);
 }
