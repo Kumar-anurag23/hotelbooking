@@ -55,14 +55,19 @@ public class RoomController {
         return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "room get", false, null);
     }
 
-    @GetMapping("/roomgit" +
-            "byhid/{hotelId}")
-    public ResponseEntity<Object> getHotelWithRooms(@PathVariable Long hotelId) {
+    @GetMapping("/roomgetbyhid/{hotelId}")
+    public ResponseEntity<Object> getHotelWithRooms(
+            @PathVariable Long hotelId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "hotelId") String sort,
+            @RequestParam(defaultValue = "asc") String order) {
         try {
-            HotelDto hotelDto = roomService.getByHotelId(hotelId);
+            HotelDto hotelDto = roomService.getByHotelId(hotelId, size, page, sort, order);
             return ResponseHandler.getResponse(HttpStatus.OK, "Hotel details fetched successfully", false, hotelDto);
         } catch (Exception e) {
-            return ResponseHandler.getResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch hotel details", true, null);
+            e.printStackTrace();
+            return ResponseHandler.getResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch hotel details: " + e.getMessage(), true, null);
         }
     }
 

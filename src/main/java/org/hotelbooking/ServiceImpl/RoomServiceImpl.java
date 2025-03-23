@@ -12,6 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +35,10 @@ public class RoomServiceImpl implements RoomService {
     public RoomDto createRoom(RoomDto roomDto) {
         Hotels hotel = hotelRepository.findById(roomDto.getHotel_Id())
                 .orElseThrow(() -> new RuntimeException("Hotel not found with id: " + roomDto.getHotel_Id()));
+        int count1=roomRepository.findRoomCount(roomDto.getRoomNumber(),roomDto.getHotel_Id());
+        if(count1>0){
+            throw new RuntimeException("room already exist : "+roomDto.getRoomNumber()+" in this hotel : "+roomDto.getHotel_Id());
+        }
 
         Room room = new Room();
         room.setHotel(hotel);
@@ -41,27 +49,33 @@ public class RoomServiceImpl implements RoomService {
         room.setAvailable(roomDto.isAvailable());
 
         Room savedRoom = roomRepository.save(room);
-        return objectMapper.convertValue(savedRoom, RoomDto.class);
+
+        RoomDto saveRoomDto= objectMapper.convertValue(savedRoom, RoomDto.class);
+        saveRoomDto.setHotel_Id(savedRoom.getHotel().getId());
+        return saveRoomDto;
     }
 
     @Override
-    @Cacheable(value = "rooms", key = "#id != null ? #id : 'default'")
-    public HotelDto getByHotelId(Long hotelId) {
-        Hotels hotel = hotelRepository.findByIdWithRooms(Math.toIntExact(hotelId))
-                .orElseThrow(() -> new RuntimeException("Hotel not found"));
+    @Cacheable(value = "hotels", key = "{#hotelId, #size, #page, #sortBy, #order}")
+    public HotelDto getByHotelId(Long hotelId, int size, int page, String sortBy, String order) {
+        Hotels hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new RuntimeException("Hotel not found with id: " + hotelId));
         HotelDto hotelDto = objectMapper.convertValue(hotel, HotelDto.class);
-        List<RoomDto> roomDtos = hotel.getRooms().stream()
+        Sort sort = Sort.by(Sort.Direction.fromString(order), sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Room> roomsPage = roomRepository.findByHotelId(hotelId, pageable);
+        List<RoomDto> roomDtos = roomsPage.getContent().stream()
                 .map(room -> {
                     RoomDto roomDto = objectMapper.convertValue(room, RoomDto.class);
                     roomDto.setHotel_Id(room.getHotel().getId());
                     return roomDto;
                 })
                 .collect(Collectors.toList());
+
         hotelDto.setRooms(roomDtos);
 
         return hotelDto;
     }
-
     @Override
     @Cacheable(value = "rooms", key = "#id != null ? #id : 'default'")
     public RoomDto getRoomById(Long id) {
