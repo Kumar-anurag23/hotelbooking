@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 @RestController
@@ -47,6 +49,7 @@ public class BookingController {
         return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "something went wrong", false, null);
     }
 
+
     @GetMapping("/bookingId/{id}")
     public ResponseEntity<Object> getBookingById(@PathVariable Long id) {
         BookingDto bookingDto = bookingService.getBooking(id);
@@ -54,6 +57,22 @@ public class BookingController {
             return ResponseHandler.getResponse(HttpStatus.OK, "get booking", true, bookingDto);
         }
         return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "something went wrong", false, null);
+    }
+    @PostMapping("{id}/cancel")
+    public ResponseEntity<Object> cancelBooking(@PathVariable Long id) {
+        BookingDto bookingDto = bookingService.cancelBooking(id);
+        if (bookingDto != null) {
+            return ResponseHandler.getResponse(HttpStatus.OK, "cancel booking", true, bookingDto);
+        }
+        return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "something went wrong", false, null);
+    }
+    @GetMapping("hotel/{hotelId}/status/{status}/date/{checkInDate}")
+    public ResponseEntity<Object> getBookingStatus(@PathVariable Long hotelId, @PathVariable String status,@PathVariable LocalDate checkInDate) {
+      List<Booking> list=bookingService.getBookings(hotelId,status,checkInDate);
+      if (list != null) {
+          return ResponseHandler.getResponse(HttpStatus.OK, "get booking status", true, list);
+      }
+      return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "something went wrong", false, null);
     }
 
     @DeleteMapping("/deletebyid/{id}")

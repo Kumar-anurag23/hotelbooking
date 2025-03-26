@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -20,4 +21,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     );
     @Query("select count(b) from Booking  b where b.room.id = :roomID")
     int countByRoomId(@Param("roomId") Long roomId);
+    @Query("SELECT b FROM Booking b WHERE b.hotel.id = :hotelId " +
+            "AND b.status = :status " +
+            "AND b.checkInDate = :checkInDate")
+    List<Booking> findStatusAndCheckInDate(@Param("hotelId")long hotelId,@Param("status")String status,@Param("checkInDate")LocalDate checkInDate);
 }

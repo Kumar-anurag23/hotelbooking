@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +33,8 @@ public class BookingServiceImpl implements BookingService {
     private HotelRepository hotelRepository;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private  EmailServiceImpl emailService;
 
     @Override
     @CacheEvict(value = "booking", allEntries = true)
@@ -42,7 +45,7 @@ public class BookingServiceImpl implements BookingService {
         Hotels hotel = hotelRepository.findById(bookingDto.getHotelId())
                 .orElseThrow(() -> new RuntimeException("Hotel not found with id: " + bookingDto.getHotelId()));
 
-        boolean isRoomBooked = bookingRepository.existsByRoomAndCheckInDate(room, LocalDate.parse(bookingDto.getCheckInDate()));
+        boolean isRoomBooked = bookingRepository.existsByRoomAndCheckInDate(room, bookingDto.getCheckInDate());
         if (isRoomBooked) {
             throw new RuntimeException("Room is already booked for the given check-in date: " + bookingDto.getCheckInDate());
         }
@@ -57,6 +60,9 @@ public class BookingServiceImpl implements BookingService {
         BookingDto savedBookingDto = objectMapper.convertValue(savedBooking, BookingDto.class);
         savedBookingDto.setRoomId(savedBooking.getRoom().getId());
         savedBookingDto.setHotelId(savedBooking.getHotel().getId());
+        emailService.sendConfirmationEmail(bookingDto.getEmail(),booking.getName(),bookingDto.getRoomNumber(),bookingDto.getCheckInDate(),
+                bookingDto.getCheckOutDate(),bookingDto.getTotalPrice()
+        );
         return savedBookingDto;
     }
     @Override
@@ -94,6 +100,7 @@ public class BookingServiceImpl implements BookingService {
         return objectMapper.convertValue(booking, BookingDto.class);
     }
 
+
     @Override
     @Cacheable(value = "booking",key = "{#page, #size, #sortBy, #sortDir}")
     public List<Booking> getAllBookings(int size,int page ,String sortBy,String sortDir) {
@@ -119,4 +126,40 @@ public class BookingServiceImpl implements BookingService {
         }
         return "Booking not found";
     }
+
+    @Override
+    public BookingDto cancelBooking(Long bookingId) {
+        Booking booking=bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found with id: " + bookingId));
+        if(!"CONFIRMED".equals(booking.getStatus())){
+          throw new RuntimeException("Booking status is not CONFIRMED");
+        }
+        LocalDate today = LocalDate.now();
+        LocalDate checkInDate = booking.getCheckInDate();
+        long daysBetween = ChronoUnit.DAYS.between(today, checkInDate);
+        booking.setStatus("Canceled");
+        if(daysBetween>7) {
+            booking.setPaymentStatus("REFUNDED");
+        }else if (daysBetween >= 2) {
+
+            booking.setPaymentStatus("REFUND_PENDING");
+        } else {
+
+            booking.setPaymentStatus("CANCELLED_NO_REFUND");
+        }
+       emailService.sendCancellationEmail(booking.getEmail(),booking.getName(),
+               booking.getRoomNumber(),
+               booking.getCheckInDate(),
+
+               booking.getCheckOutDate());
+       bookingRepository.save(booking);
+     return null;
+    }
+
+    @Override
+    public List<Booking> getBookings(Long hotelId, String status, LocalDate checkInDate) {
+        Hotels hotels=hotelRepository.findById(hotelId).orElseThrow(()->new RuntimeException("hotel id not found"));
+        List<Booking> booking=bookingRepository.findStatusAndCheckInDate(hotelId,status,checkInDate);
+        return booking;
+    }
+
 }

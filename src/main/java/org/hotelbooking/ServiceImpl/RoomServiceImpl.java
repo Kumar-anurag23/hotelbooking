@@ -113,4 +113,9 @@ public class RoomServiceImpl implements RoomService {
         }
         return false;
     }
+
+    @Override
+    public List<RoomDto> paymentStatus() {
+        return List.of();
+    }
 }

@@ -37,11 +37,12 @@ public class Booking {
     private String roomNumber;
 
     @Column(name = "check_in_date", nullable = false)
-    private String checkInDate;
+    private LocalDate checkInDate;
 
     @Column(name = "check_out_date", nullable = false)
-    private String checkOutDate;
+    private LocalDate checkOutDate;
 
+    @JsonProperty("total_Price")
     @Column(name = "total_price", nullable = false)
     private Double totalPrice;
 

@@ -67,7 +67,6 @@ public class HotelServiceImpl implements HotelService {
   Hotels savedHotel = hotelRepository.save(existingHotel);
   return objectMapper.convertValue(savedHotel, HotelDto.class);
  }
-
  @Override
  @CacheEvict(value = "hotels", key = "#id")
  public void deleteHotel(Long id) {

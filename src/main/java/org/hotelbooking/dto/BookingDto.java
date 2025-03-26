@@ -28,12 +28,13 @@ public class BookingDto {
 
     private String roomNumber;
 
-    private String checkInDate;
+    private LocalDate checkInDate;
 
 
-    private String checkOutDate;
+    private LocalDate
+            checkOutDate;
 
-
+    @JsonProperty("total_Price")
     private Double totalPrice;
 
     private String status;

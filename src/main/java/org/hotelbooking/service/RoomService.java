@@ -12,5 +12,6 @@ public interface RoomService {
     RoomDto getRoomById(Long id);
     RoomDto updateRoom(RoomDto roomDto,Long id);
     boolean deleteRoom(Long id);
+    List<RoomDto> paymentStatus();
 
 }
