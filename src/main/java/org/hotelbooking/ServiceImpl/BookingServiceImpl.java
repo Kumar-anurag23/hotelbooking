@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -111,20 +112,13 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @CacheEvict(value = "booking", allEntries = true)
-    public String deleteBooking(Long bookingId) {
-        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
-        if (bookingOptional.isPresent()) {
-            Booking booking = bookingOptional.get();
-            Room room = booking.getRoom();
-            bookingRepository.deleteById(bookingId);
-            long remainingBookings = bookingRepository.countByRoomId(room.getId());
-            if (remainingBookings == 0) {
-                room.setAvailable(true);
-                roomRepository.save(room);
-            }
-            return "Booking deleted successfully";
+    public void deleteBookingByHotelIdAndRoomNumber(Long hotelId, String roomNumber) {
+        Hotels hotels=hotelRepository.findById(hotelId).orElseThrow(() -> new RuntimeException("Hotel not found with id: " + hotelId));
+       int bookings = bookingRepository.deleteByHotelAndRoom(hotelId, roomNumber);
+        if (bookings<0) {
+            throw new RuntimeException("Booking not found with id: " + hotelId);
         }
-        return "Booking not found";
+        System.out.println("Booking object after delete: " + bookings);
     }
 
     @Override

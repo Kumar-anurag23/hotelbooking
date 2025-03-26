@@ -4,13 +4,11 @@ import org.hotelbooking.dto.BookingDto;
 import org.hotelbooking.models.Booking;
 import org.hotelbooking.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 @RestController
 @RequestMapping("/booking")
@@ -75,9 +73,13 @@ public class BookingController {
       return ResponseHandler.getResponse(HttpStatus.BAD_REQUEST, "something went wrong", false, null);
     }
 
-    @DeleteMapping("/deletebyid/{id}")
-    public ResponseEntity<Object> deleteBookingById(@PathVariable Long id) {
-        bookingService.deleteBooking(id);
-        return ResponseHandler.getResponse(HttpStatus.OK, "delete booking", true, id);
+
+    @DeleteMapping("/by-hotel-and-room")
+    public ResponseEntity<Object> deleteBookingByHotelAndRoom(
+            @RequestParam Long hotelId,
+            @RequestParam String roomNumber) {
+
+        bookingService.deleteBookingByHotelIdAndRoomNumber(hotelId, roomNumber);
+               return ResponseHandler.getResponse(HttpStatus.OK,"delete hotel",true,null);
     }
 }
