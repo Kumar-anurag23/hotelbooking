@@ -62,6 +62,12 @@ Use Maven to install the necessary dependencies.
 
 ### 4. Run the Application
 Use Maven to start the application.
+## ✉️ Email Confirmation
+When a booking is made, the system sends a confirmation email to the user. Here's a sample of what the email looks like:
+
+![Booking Confirmation Email](./images/booking-confirmation-email.png)  <!-- Adjust path as needed -->
+
+*Sample booking confirmation email sent to users*
 
 ## 🚀 API Endpoints
 ### Booking Controller (/booking)
